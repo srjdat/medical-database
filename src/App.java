@@ -38,7 +38,7 @@ public class App extends JFrame {
         //should have a enter name in red preview text
         JTextField nameTextField = new JTextField();
         nameTextField.setPreferredSize(new Dimension(200, 30));
-        nameTextField.setFont(new Font("Times New Roman", 0, 20));
+        nameTextField.setFont(new Font("Times New Roman", 0, 17));
         TextPrompt tp = new TextPrompt("Enter name", nameTextField);
         tp.setFont(new Font("Times New Roman", 0, 15));
         tp.setForeground(Color.RED);
@@ -47,7 +47,7 @@ public class App extends JFrame {
         //should have a preview text saying 'yyyy-mm-dd' since that is the format 
         JTextField dateTextField = new JTextField();
         dateTextField.setPreferredSize(new Dimension(200, 30));
-        dateTextField.setFont(new Font("Times New Roman", 0, 20));
+        dateTextField.setFont(new Font("Times New Roman", 0, 17));
         TextPrompt tp2 = new TextPrompt("yyyy-mm-dd", dateTextField);
         tp2.setFont(new Font("Times New Roman", 0, 15));
         tp2.setForeground(Color.RED);
@@ -84,13 +84,7 @@ public class App extends JFrame {
                     bool = true; 
                 }
             }
-            
-            if(bool) {
-                System.out.println("person exists");
-            } else {
-                System.out.println("person doesn't exist");
-            }
-
+            System.out.println(bool);
             nameTextField.setText("");
             dateTextField.setText("");
         });
