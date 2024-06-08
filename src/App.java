@@ -1,6 +1,9 @@
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import java.awt.BorderLayout;
@@ -8,6 +11,8 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.PopupMenu;
+import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -68,6 +73,9 @@ public class App extends JFrame {
         }); 
 
         //button to get a specific patient
+
+        JMenu menu = new JMenu("test");
+
         JButton getPatientButton = new JButton("Get Patient Information");
         getPatientButton.addActionListener(e -> {
             String name = nameTextField.getText(); 
@@ -80,9 +88,7 @@ public class App extends JFrame {
 
             Boolean bool = false; 
             for (int i = 0; i < patientList.size(); i++) {
-                if(patientList.get(i).dob.equals(date) && patientList.get(i).name.equals(name)) {
-                    bool = true; 
-                }
+                bool = patientList.get(i).equals(date, name);
             }
             System.out.println(bool);
             nameTextField.setText("");
@@ -94,8 +100,8 @@ public class App extends JFrame {
         addPatientPanel.add(dateTextField);
         addPatientPanel.add(addPatientButton);
         addPatientPanel.add(getPatientButton);
-        frame.add(addPatientPanel, BorderLayout.SOUTH);
 
+        frame.add(addPatientPanel, BorderLayout.SOUTH);
 
 
         /*
@@ -104,14 +110,24 @@ public class App extends JFrame {
         JPanel addAppointmentPanel = new JPanel(); 
         addAppointmentPanel.setLayout(new FlowLayout());
 
+        JButton addAppointmentButton = new JButton("Add Appointment");
+                
 
+        addAppointmentPanel.add(addAppointmentButton); 
         frame.add(addAppointmentPanel, BorderLayout.NORTH);
 
 
         /*
          * Center Panel, going to include all the patients/patient history
          */
+        JPanel displayPanel = new JPanel(new BorderLayout()); 
+        displayPanel.setBackground(Color.lightGray);
 
+        JTextArea displayTextArea = new JTextArea(); 
+        
+        
+        displayPanel.add(displayTextArea); 
+        frame.add(displayPanel, BorderLayout.CENTER);
         
     }
 

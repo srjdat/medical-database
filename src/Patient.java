@@ -26,4 +26,9 @@ public class Patient {
 
     public String getAppointmentHistory() { return history.toString(); }
 
+    public boolean equals(Date date, String name) {
+        //patientList.get(i).dob.equals(date) && patientList.get(i).name.equals(name);
+        return this.dob.equals(date) && this.name.equals(name);
+    }
+
 }
