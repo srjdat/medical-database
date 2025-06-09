@@ -2,9 +2,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.tools.Tool;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -13,21 +16,48 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.PopupMenu;
 import java.awt.event.ActionListener;
+import java.awt.GraphicsDevice;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import java.util.ArrayList;
 import java.util.Date; 
 
 public class App extends JFrame { 
  
     static ArrayList<Patient> patientList = new ArrayList<>();
+    
+    /*Get patient from name method */
+    public Patient findPatient(String name, String dob) {
+        for (Patient p : patientList) {
+            System.out.println(p.toString());
+            System.out.println(name + " " + dob);
+
+            try {
+                if (p.equals(new SimpleDateFormat("yyyy-MM-dd").parse(dob), name)) {
+                    return p;
+                }
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
 
     public App() {
+
+        //Get screen dimensions
+        Toolkit tk = Toolkit.getDefaultToolkit();
+        Dimension screenSize = tk.getScreenSize();
+
         JFrame frame = new JFrame(); 
         frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
-        frame.setTitle("Hello");
-        frame.setSize(400, 400);
+        frame.setTitle("Database");
+        frame.setSize((int)(screenSize.getWidth()/2), (int)(screenSize.getHeight()/2));
         frame.setVisible(true);
 
 
@@ -74,7 +104,7 @@ public class App extends JFrame {
 
         //button to get a specific patient
 
-        JMenu menu = new JMenu("test");
+        //JMenu menu = new JMenu("test");
 
         JButton getPatientButton = new JButton("Get Patient Information");
         getPatientButton.addActionListener(e -> {
@@ -86,11 +116,10 @@ public class App extends JFrame {
             try { date = new SimpleDateFormat("yyyy-MM-dd").parse(dateTextField.getText()); } 
             catch (ParseException e1) { e1.printStackTrace(); }
 
-            Boolean bool = false; 
             for (int i = 0; i < patientList.size(); i++) {
-                bool = patientList.get(i).equals(date, name);
+                System.out.println(patientList.get(i).getname() + " " + patientList.get(i).getRace() + " " + patientList.get(i).getSex() + " " + patientList.get(i).getDOB());
             }
-            System.out.println(bool);
+            
             nameTextField.setText("");
             dateTextField.setText("");
         });
@@ -104,16 +133,32 @@ public class App extends JFrame {
         frame.add(addPatientPanel, BorderLayout.SOUTH);
 
 
+
+
         /*
          * Top Panel, add appointment for patients
          */
         JPanel addAppointmentPanel = new JPanel(); 
-        addAppointmentPanel.setLayout(new FlowLayout());
+        addAppointmentPanel.setLayout(new FlowLayout(1, 15, 23));
 
         JButton addAppointmentButton = new JButton("Add Appointment");
-                
+        JButton getAppointmentButton = new JButton("Get Appointment");
 
+        getAppointmentButton.addActionListener(e -> {
+            String name = nameTextField.getText();
+            String dob = dateTextField.getText();
+            Patient patient = findPatient(name, dob);
+
+            if (patient != null) {
+                new AppointmentDialog(frame, patient).setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(frame, "Patient not found.");
+            }
+        });                
+
+        
         addAppointmentPanel.add(addAppointmentButton); 
+        addAppointmentPanel.add(getAppointmentButton);
         frame.add(addAppointmentPanel, BorderLayout.NORTH);
 
 
@@ -125,7 +170,7 @@ public class App extends JFrame {
 
         JTextArea displayTextArea = new JTextArea(); 
         
-        
+
         displayPanel.add(displayTextArea); 
         frame.add(displayPanel, BorderLayout.CENTER);
         
@@ -145,6 +190,8 @@ public class App extends JFrame {
         srijan.addAppointment(new SimpleDateFormat("MM-dd-yyyy").parse("5-26-2022"), "jujutsu shenangins");
 
         patientList.add(srijan);
+
+        System.out.println(srijan.getAppointmentHistory());
     }
     
 }
