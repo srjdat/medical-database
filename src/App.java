@@ -6,6 +6,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import org.w3c.dom.Text;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -49,6 +51,18 @@ public class App extends JFrame {
         frame.setTitle("Database");
         frame.setSize((int)(screenSize.getWidth()/2), (int)(screenSize.getHeight()/2));
         frame.setVisible(true);
+        
+        /*
+         * Center Panel, going to include all the patients/patient history
+         */
+        JPanel displayPanel = new JPanel(new BorderLayout()); 
+        displayPanel.setBackground(Color.lightGray);
+
+        JTextArea displayTextArea = new JTextArea(); 
+        
+
+        displayPanel.add(displayTextArea); 
+        frame.add(displayPanel, BorderLayout.CENTER);
 
 
         /*  
@@ -59,102 +73,68 @@ public class App extends JFrame {
         addPatientPanel.setLayout(new FlowLayout(1, 15, 23));
         addPatientPanel.setPreferredSize(new Dimension(100, 75));
 
+        Font font1 = new Font("Times New Roman", 0, 17);
+        Font font2 = new Font("Times New Roman", 0, 15);
+
         //textfield to enter the name
         //should have a enter name in red preview text
         JTextField nameTextField = new JTextField();
         nameTextField.setPreferredSize(new Dimension(200, 30));
-        nameTextField.setFont(new Font("Times New Roman", 0, 17));
+        nameTextField.setFont(font1);
         TextPrompt tp = new TextPrompt("Enter name", nameTextField);
-        tp.setFont(new Font("Times New Roman", 0, 15));
+        tp.setFont(font2);
         tp.setForeground(Color.RED);
 
         //textfield to enter the date of birth 
         //should have a preview text saying 'yyyy-mm-dd' since that is the format 
         JTextField dateTextField = new JTextField();
         dateTextField.setPreferredSize(new Dimension(200, 30));
-        dateTextField.setFont(new Font("Times New Roman", 0, 17));
+        dateTextField.setFont(font1);
         TextPrompt tp2 = new TextPrompt("yyyy-mm-dd", dateTextField);
-        tp2.setFont(new Font("Times New Roman", 0, 15));
+        tp2.setFont(font2);
         tp2.setForeground(Color.RED);
+
+        //textfield to enter sex
+        //i'll add a pop down thing later
+        JTextField sexTextField = new JTextField();
+        sexTextField.setPreferredSize(new Dimension(200,30));
+        sexTextField.setFont(font1);
+        TextPrompt tp3 = new TextPrompt("Enter Sex", sexTextField);
+        tp3.setFont(font2);
+        tp3.setForeground(Color.RED);
+
+        //textfield to enter race
+        //maybe a pop down? not sure right now
+        JTextField raceTextField = new JTextField();
+        raceTextField.setPreferredSize(new Dimension(200,30));
+        raceTextField.setFont(font1);
+        TextPrompt tp4 = new TextPrompt("Enter Race", raceTextField);
+        tp4.setFont(font2);
+        tp4.setForeground(Color.RED);
 
         //button for adding
         //have a dialog to add sex and race
         JButton addPatientButton = new JButton("Add Patient"); 
         addPatientButton.addActionListener(e -> {
-            
-            //new PatientDialog(frame).setVisible(true);
-            
-            JDialog dialog = new JDialog();
-            dialog.setTitle("Sex and Race");
-            dialog.setLayout(new FlowLayout());
+            try {
+                patientList.add(new Patient(nameTextField.getText(), new SimpleDateFormat("yyyy-MM-dd").parse(dateTextField.getText()), sexTextField.getText(), raceTextField.getText()));
 
-            //labels for sex and race
-            JTextField sexTextArea = new JTextField();
-            sexTextArea.setPreferredSize(new Dimension(160, 30));
-            TextPrompt sexTP = new TextPrompt("Enter Sex", sexTextArea);
-            sexTP.setFont(new Font("Times New Roman", 0, 15));
-            sexTP.setForeground(Color.RED);
-            dialog.add(sexTextArea);
-            JTextField raceTextArea = new JTextField();
-            raceTextArea.setPreferredSize(new Dimension(160, 30));
-            TextPrompt raceTP = new TextPrompt("Enter Race", raceTextArea);
-            raceTP.setFont(new Font("Times New Roman", 0, 15));
-            raceTP.setForeground(Color.RED);
-            dialog.add(raceTextArea);
-
-            JButton button = new JButton("Close");
-
-            button.addActionListener(f -> {
-                try {
-                    patientList.add(new Patient(nameTextField.getText(), new SimpleDateFormat("yyyy-MM-dd").parse(dateTextField.getText()), sexTextArea.getText(), raceTextArea.getText()));
-                } catch (Exception g) {
-                    g.printStackTrace();
-                }
-
-                dialog.dispose();
-            });
-             
-            dialog.add(button);
-            dialog.setSize(220,145);
-            dialog.setLocationRelativeTo(frame);
-            dialog.setVisible(true);
-
-            nameTextField.setText("");
-            dateTextField.setText("");
-        }); 
-        
-
-        //button to get a specific patient
-
-        //JMenu menu = new JMenu("test");
-
-        JButton getPatientButton = new JButton("Get Patient Information");
-        getPatientButton.addActionListener(e -> {
-            String name = nameTextField.getText(); 
-            Date date = new Date();
-
-            //make the date string into an actual date object
-            //idk if i should keep this formatting but it's easier on my eyes for now might change later
-            try { date = new SimpleDateFormat("yyyy-MM-dd").parse(dateTextField.getText()); } 
-            catch (ParseException e1) { e1.printStackTrace(); }
-
-            for (int i = 0; i < patientList.size(); i++) {
-                System.out.println(patientList.get(i).getname() + " " + patientList.get(i).getRace() + " " + patientList.get(i).getSex() + " " + patientList.get(i).getDOB());
+                nameTextField.setText("");
+                dateTextField.setText("");
+                sexTextField.setText("");
+                raceTextField.setText("");
+            } catch (ParseException e1) {
+                e1.printStackTrace();
             }
-            
-            nameTextField.setText("");
-            dateTextField.setText("");
         });
-
 
         addPatientPanel.add(nameTextField);
         addPatientPanel.add(dateTextField);
+        addPatientPanel.add(sexTextField);
+        addPatientPanel.add(raceTextField);
         addPatientPanel.add(addPatientButton);
-        addPatientPanel.add(getPatientButton);
 
         frame.add(addPatientPanel, BorderLayout.SOUTH);
-
-
 
 
         /*
@@ -179,25 +159,35 @@ public class App extends JFrame {
 
             nameTextField.setText("");
             dateTextField.setText("");
-        });                
-
+        });     
         
+        //get patient button
+        JButton getPatientButton = new JButton("Get Patient Information");
+        getPatientButton.addActionListener(e -> {
+            String name = nameTextField.getText();
+            Date date = new Date();
+
+            //make the date string into an actual date object
+            //idk if i should keep this formatting but it's easier on my eyes for now might change later
+            try { 
+                date = new SimpleDateFormat("yyyy-MM-dd").parse(dateTextField.getText()); 
+
+
+            } 
+            catch (ParseException e1) { 
+                e1.printStackTrace(); 
+            }
+            
+            nameTextField.setText("");
+            dateTextField.setText("");
+        });
+
+        addAppointmentPanel.add(getPatientButton);
         addAppointmentPanel.add(addAppointmentButton); 
         addAppointmentPanel.add(getAppointmentButton);
         frame.add(addAppointmentPanel, BorderLayout.NORTH);
 
 
-        /*
-         * Center Panel, going to include all the patients/patient history
-         */
-        JPanel displayPanel = new JPanel(new BorderLayout()); 
-        displayPanel.setBackground(Color.lightGray);
-
-        JTextArea displayTextArea = new JTextArea(); 
-        
-
-        displayPanel.add(displayTextArea); 
-        frame.add(displayPanel, BorderLayout.CENTER);
         
     }
 
