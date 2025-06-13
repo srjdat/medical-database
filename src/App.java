@@ -1,23 +1,16 @@
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.tools.Tool;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.PopupMenu;
-import java.awt.event.ActionListener;
-import java.awt.GraphicsDevice;
-import java.awt.Dimension;
 import java.awt.Toolkit;
 
 import java.text.ParseException;
@@ -33,9 +26,6 @@ public class App extends JFrame {
     /*Get patient from name method */
     public Patient findPatient(String name, String dob) {
         for (Patient p : patientList) {
-            System.out.println(p.toString());
-            System.out.println(name + " " + dob);
-
             try {
                 if (p.equals(new SimpleDateFormat("yyyy-MM-dd").parse(dob), name)) {
                     return p;
@@ -88,19 +78,51 @@ public class App extends JFrame {
         tp2.setForeground(Color.RED);
 
         //button for adding
+        //have a dialog to add sex and race
         JButton addPatientButton = new JButton("Add Patient"); 
         addPatientButton.addActionListener(e -> {
-            try {
-                patientList.add(new Patient(nameTextField.getText(), new SimpleDateFormat("yyyy-MM-dd").parse(dateTextField.getText())));
-            } catch (ParseException e1) {
-                e1.printStackTrace();
-            }
+            
+            //new PatientDialog(frame).setVisible(true);
+            
+            JDialog dialog = new JDialog();
+            dialog.setTitle("Sex and Race");
+            dialog.setLayout(new FlowLayout());
+
+            //labels for sex and race
+            JTextField sexTextArea = new JTextField();
+            sexTextArea.setPreferredSize(new Dimension(160, 30));
+            TextPrompt sexTP = new TextPrompt("Enter Sex", sexTextArea);
+            sexTP.setFont(new Font("Times New Roman", 0, 15));
+            sexTP.setForeground(Color.RED);
+            dialog.add(sexTextArea);
+            JTextField raceTextArea = new JTextField();
+            raceTextArea.setPreferredSize(new Dimension(160, 30));
+            TextPrompt raceTP = new TextPrompt("Enter Race", raceTextArea);
+            raceTP.setFont(new Font("Times New Roman", 0, 15));
+            raceTP.setForeground(Color.RED);
+            dialog.add(raceTextArea);
+
+            JButton button = new JButton("Close");
+
+            button.addActionListener(f -> {
+                try {
+                    patientList.add(new Patient(nameTextField.getText(), new SimpleDateFormat("yyyy-MM-dd").parse(dateTextField.getText()), sexTextArea.getText(), raceTextArea.getText()));
+                } catch (Exception g) {
+                    g.printStackTrace();
+                }
+
+                dialog.dispose();
+            });
+             
+            dialog.add(button);
+            dialog.setSize(220,145);
+            dialog.setLocationRelativeTo(frame);
+            dialog.setVisible(true);
 
             nameTextField.setText("");
             dateTextField.setText("");
-
-            System.out.println(patientList.toString());
         }); 
+        
 
         //button to get a specific patient
 
@@ -154,6 +176,9 @@ public class App extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(frame, "Patient not found.");
             }
+
+            nameTextField.setText("");
+            dateTextField.setText("");
         });                
 
         

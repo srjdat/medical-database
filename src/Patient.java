@@ -29,7 +29,7 @@ public class Patient {
 
     public void setRace(String race) { this.race = race; }
 
-    public String toString() { return "" + name + ": " + new SimpleDateFormat("yyyy-MM-dd").format(dob); }
+    public String toString() { return "" + name + ": " + new SimpleDateFormat("yyyy-MM-dd").format(dob) + ", " + sex + ", " + race; }
 
     public void addAppointment(Date date, String reason) { 
         history.append(new SimpleDateFormat("yyyy-MM-dd").format(date) + ": " + reason + "\n"); 
