@@ -178,6 +178,7 @@ public class App extends JFrame {
             Patient p = findPatient(name, date);
 
             if (p != null) {
+                displayTextArea.setFont(font3);
                 displayTextArea.setText(p.toString());
             } else {
                 JOptionPane.showMessageDialog(frame, "Patient Not Found");
