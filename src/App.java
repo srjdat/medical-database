@@ -3,10 +3,9 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
-import org.w3c.dom.Text;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -24,6 +23,11 @@ import java.util.Date;
 public class App extends JFrame { 
  
     static ArrayList<Patient> patientList = new ArrayList<>();
+
+    //get the fonts
+    Font font1 = new Font("Times New Roman", 0, 17);
+    Font font2 = new Font("Times New Roman", 0, 15);
+    Font font3 = new Font("Times New Roman", 0, 25);
     
     /*Get patient from name method */
     public Patient findPatient(String name, String dob) {
@@ -54,15 +58,18 @@ public class App extends JFrame {
         
         /*
          * Center Panel, going to include all the patients/patient history
-         */
-        JPanel displayPanel = new JPanel(new BorderLayout()); 
-        displayPanel.setBackground(Color.lightGray);
+         */ 
+        JPanel displayPanel = new JPanel(new BorderLayout());
+        displayPanel.setBackground(Color.LIGHT_GRAY);
 
-        JTextArea displayTextArea = new JTextArea(); 
-        
+        // text area to display stuff
+        JTextArea displayTextArea = new JTextArea();
+        //user can't edit it
+        displayTextArea.setEditable(false); 
+        JScrollPane scrollPane = new JScrollPane(displayTextArea);
+        displayPanel.add(scrollPane, BorderLayout.CENTER);
 
-        displayPanel.add(displayTextArea); 
-        frame.add(displayPanel, BorderLayout.CENTER);
+        frame.add(displayPanel, BorderLayout.CENTER);     
 
 
         /*  
@@ -72,9 +79,6 @@ public class App extends JFrame {
         addPatientPanel.setBackground(Color.BLUE);
         addPatientPanel.setLayout(new FlowLayout(1, 15, 23));
         addPatientPanel.setPreferredSize(new Dimension(100, 75));
-
-        Font font1 = new Font("Times New Roman", 0, 17);
-        Font font2 = new Font("Times New Roman", 0, 15);
 
         //textfield to enter the name
         //should have a enter name in red preview text
@@ -165,18 +169,20 @@ public class App extends JFrame {
         JButton getPatientButton = new JButton("Get Patient Information");
         getPatientButton.addActionListener(e -> {
             String name = nameTextField.getText();
-            Date date = new Date();
+            String date = dateTextField.getText();
 
             //make the date string into an actual date object
             //idk if i should keep this formatting but it's easier on my eyes for now might change later
-            try { 
-                date = new SimpleDateFormat("yyyy-MM-dd").parse(dateTextField.getText()); 
+            
+            //date = new SimpleDateFormat("yyyy-MM-dd").parse(dateTextField.getText()); 
+            Patient p = findPatient(name, date);
 
-
-            } 
-            catch (ParseException e1) { 
-                e1.printStackTrace(); 
+            if (p != null) {
+                displayTextArea.setText(p.toString());
+            } else {
+                JOptionPane.showMessageDialog(frame, "Patient Not Found");
             }
+           
             
             nameTextField.setText("");
             dateTextField.setText("");
@@ -207,6 +213,5 @@ public class App extends JFrame {
         patientList.add(srijan);
 
         System.out.println(srijan.getAppointmentHistory());
-    }
-    
+    }    
 }
